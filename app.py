@@ -42,6 +42,34 @@ def home():
     return render_template("index.html", Electronics=Electronics, Smartphones=Smartphones, Clothes=Clothes)
 
 
+# Below is a route that will fetch a single product by use of the product id
+@app.route("/single_page/<product_id>")
+def single_page(product_id):
+    # create a db connection
+    connection = db_connection()
+
+    # structure the sql query to fetch a single record of the database based on the product id
+    sql = "SELECT * FROM `products` WHERE product_id = %s"
+
+    # create a cursor that will enable you to execute the sql
+    cursor = connection.cursor()
+
+    # Use the cursor to execute the sql replacing the placeholder with an actual product id
+    cursor.execute(sql, product_id)
+
+    # create a variable that will hold the details of a single product fetched from the database
+    product = cursor.fetchone()
+
+    # Below we are going to fetch all the products that are in the category of the chosen product
+    category = product[4]
+    sql2 = "SELECT * FROM `products` WHERE product_category = %s"
+    cursor2 = connection.cursor()
+    cursor2.execute(sql2, category)
+    similar = cursor2.fetchall()
+    
+    return render_template("single_page.html", product = product, similar = similar)
+
+
    
 @app.route("/upload", methods = ["GET" , "POST" ])
 def upload():
