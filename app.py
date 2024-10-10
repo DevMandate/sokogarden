@@ -70,6 +70,49 @@ def single_page(product_id):
     return render_template("single_page.html", product = product, similar = similar)
 
 
+# Register Route
+@app.route('/register', methods=['POST','GET'])
+def register():
+    if request.method == 'GET':
+        return render_template('register.html')
+    else:
+        username = request.form['username']
+        first_name = request.form['first_name']
+        last_name = request.form['last_name']
+        password1 = request.form['password1']
+        password2 = request.form['password2']
+        email = request.form['email']
+        phone = request.form['phone']
+        profile_picture = request.files['profile_picture']
+        profile_picture.save("static/images/" + profile_picture.filename)
+
+        if password1 != password2:
+            return render_template("register.hmtl", error = 'Passwords do match')
+        elif len(password1) < 6:
+            return render_template('register.html', error = "Password length must be more than 6" )
+        else:
+            # Create a db connection
+            connection = db_connection()
+
+            # Structure sql query to enter a new user into the database
+            sql = "INSERT INTO `users`(`username`, `first_name`, `last_name`, `password`, `email`, `phone_number`, `profile_picture`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+
+            # create a variable that will hold all the data gotten from the form
+            data = (username, first_name, last_name, password1, email, phone, profile_picture.filename)
+
+            # create a cursor
+            cursor = connection.cursor()
+
+            # use the cursor to execute the sql
+            cursor.execute(sql, data)
+
+            # finish the transaction by use of the commit function
+            connection.commit()
+
+            return render_template('register.html', success = "User Registered Successfully")
+
+
+
    
 @app.route("/upload", methods = ["GET" , "POST" ])
 def upload():
@@ -82,6 +125,8 @@ def upload():
         product_category = request.form["prodCategory"]
         product_image = request.files["prodImgName"]
         product_image.save("static/images/" + product_image.filename)
+
+        
 
         #Below we create a db connection
         connection = db_connection()
