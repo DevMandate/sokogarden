@@ -8,13 +8,33 @@
 
                <div class="collapse navbar-collapse" id="navbarCollapse">
                     <div class="navbar-nav">
+                         {% if session['key'] %}
+                         <a href="/" class="nav-item nav-link">Link1</a>
+                         <a href="/" class="nav-item nav-link">Link2</a>
+                         <a href="/" class="nav-item nav-link">Link3</a>
+                         {% else %}
                          <a href="/" class="nav-item nav-link">Home</a>
                          <a href="/" class="nav-item nav-link">Blog</a>
                          <a href="/" class="nav-item nav-link">About US</a>
+                         {% endif %}
                     </div>
-                   <div class="ms-auto">
+                   <div class=" navbar-nav ms-auto">
                     <!--    TODO Logout-->
-                        <a href="/register" class="nav-item nav-link btn btn-outline-primary">Register</a>
+                        {% if session['key'] %}
+                        <span class="text-success"> Welcome: <b>{{session['key']}}</b></span>
+                        {% if session["profile_picture"] %}
+                        <img src="../static/images/{{session['profile_picture']}}" alt="missing" width="50px" height="50px" style="border-radius: 50%;">
+                        {% endif %}
+
+                        <a href="/logout" class="nav-item nav-link btn btn-outline-danger m-2">Logout</a>
+
+                        {% else %}
+                        <a href="/login" class="nav-item nav-link btn btn-outline-primary m-2">Login</a>
+
+                        <a href="/register" class="nav-item nav-link btn btn-outline-primary m-2">Register</a>
+                        {% endif %}
+
+                        
 
 
                    </div>

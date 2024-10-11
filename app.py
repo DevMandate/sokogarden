@@ -1,7 +1,13 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, session, redirect
 import pymysql
 
 app = Flask(__name__)
+
+# we are going to create a secret a secret key that will enamble us to secure our session just incase of an attack. The secret key is just randomized string of values
+app.secret_key = "2345678oiuytredfghjklytgjhmgfhtfc78ughvnhf"
+
+
+
 
 def db_connection():
     return pymysql.connect(host='localhost', user='root', password='', database='sokogarden')
@@ -112,6 +118,45 @@ def register():
             return render_template('register.html', success = "User Registered Successfully")
 
 
+# Below is the login route
+@app.route('/login', methods = ['POST' , 'GET'])
+def login():
+    if request.method == 'GET':
+        return render_template('login.html')
+    else:
+        username = request.form['username']
+        password = request.form['password']
+
+        connection = db_connection()
+        
+        sql = "SELECT * FROM `users` WHERE username = %s AND password = %s "
+
+        data = (username, password)
+
+        cursor = connection.cursor()
+        cursor.execute(sql, data)
+        # Fetch the details of one person and store them in a variable
+        user = cursor.fetchone()
+
+        if cursor.rowcount == 0:
+            return render_template('login.html', error = 'Invalid username or password')
+        else:
+            # you need to establish a session for this user. You require atleast one parameter to track all the activities done by this userwhen he or she is logged in.
+            session['key'] = username
+            session['profile_picture'] = user[6]
+            return redirect('/')
+        
+
+        
+
+
+
+
+@app.route('/logout')
+def logout():
+    # remobe user from the session
+    session.clear()
+    return redirect('/')
 
    
 @app.route("/upload", methods = ["GET" , "POST" ])
