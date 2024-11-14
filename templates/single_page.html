@@ -34,6 +34,35 @@
    </section> 
    <br>
    <!-- {{similar}} -->
+
+   <section class="row">
+    <div class="col-md-6 p-4">
+        {% if session["key"] %}
+        <div class="card shadow p-3">
+           <h3> Complete Payment</h3>
+           <form action="/mpesapayment" method="post">
+            <label><b> Phone Number </b></label>
+            <input type="number" name="phone" placeholder="Enter your phone number with format 2547..." class="form-control" required>
+
+            <label><b> Amount </b></label>
+            <input type="number" name="amount" value="{{product[3]}}" class="form-control" readonly> <br>
+
+            <input type="submit" value="Pay Now" class="btn btn-success">
+
+
+           </form>
+        </div>
+        {% else %}
+        <h4>Login to complete the payment</h4>
+        <a href="/login" class="btn btn-success">Login</a>
+        {% endif %}
+
+
+    </div>
+    <div class="col-md-6"></div>
+   </section>
+
+
     <h3>You may also like:</h3>
     {% for image in similar %}
     <img src="../static/images/{{image[5]}}" height="100" width="100">
