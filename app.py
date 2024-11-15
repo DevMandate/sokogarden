@@ -1,5 +1,6 @@
 from flask import *
 import pymysql
+import sms
 
 app = Flask(__name__)
 
@@ -20,7 +21,7 @@ def home():
     # structure a query that will show the products in a category Electronics
     sql = 'SELECT * FROM `products` WHERE product_category = "Electronics";'
 
-    # Createc cursor
+    # Create cursor
     cursor = connection.cursor()
 
     # Execute the query by use of the cursor:
@@ -115,6 +116,8 @@ def register():
             # finish the transaction by use of the commit function
             connection.commit()
 
+            # sennding an sms after a successful registrationm
+            sms.send_sms(phone, f"{username} Thank you for registering. Welcome to sokogarden")
             return render_template('register.html', success = "User Registered Successfully")
 
 
